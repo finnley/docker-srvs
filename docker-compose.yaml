@@ -1,0 +1,30 @@
+version: "3.0"
+
+services:
+  mysql8:
+    image: mysql:8.0
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      # 设置初始化脚本
+      - ./script/mysql/:/docker-entrypoint-initdb.d/
+    ports:
+      # 注意这里我映射为了 13316 端口
+      - "13306:3306"
+
+  consul:
+    image: consul:latest
+    ports:
+      - 8300:8300
+      - 8500:8500
+      - 8301:8301
+      - 8301:8301/udp
+      - 8302:8302
+      - 8302:8302/udp
+      - 8600:8600
+      - 8600:8600/udp
+    restart: always
+    command: agent -dev -client=0.0.0.0
+
